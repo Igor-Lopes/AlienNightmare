@@ -9,5 +9,5 @@ Igor Lopes
 Leonardo Corsino
 João Carlos Melgarejo
 Read LICENSE:
-This project can be used for thir parties for non-comercial use as long the credits to the authors in given.
+This project can be used for third parties for non-comercial use as long the credits to the authors in given.
 
