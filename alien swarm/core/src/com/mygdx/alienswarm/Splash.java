@@ -36,7 +36,7 @@ public class Splash implements Screen {
 			Gdx.files.internal("complete.png"));
 	private Texture alien_blood = new Texture(
 			Gdx.files.internal("alien_blood.png"));
-	private Texture texture = new Texture(Gdx.files.internal("new_bkg.png"));
+	private Texture texture = new Texture(Gdx.files.internal("bkg_level1.png"));
 	private Texture alien_texture = new Texture(Gdx.files.internal("alien.png"));
 	Texture bullet_texture = new Texture(Gdx.files.internal("Bullet.png"));
 	private Texture life_texture = new Texture(
@@ -66,7 +66,7 @@ public class Splash implements Screen {
 	private Sprite alien = new Sprite(alien_texture);
 	private Sprite magazine = new Sprite(magazine_texture);
 	private Sprite energy = new Sprite(energy_texture);
-	private Image splashImage = new Image(texture);
+	private Sprite splashImage = new Sprite (texture);
 	private Stage stage = new Stage();
 	private SpriteBatch batch = new SpriteBatch();
 	private Sprite spacemarine = new Sprite(spacemarine_texture);
@@ -129,6 +129,7 @@ public class Splash implements Screen {
 	private boolean GATE2_STATUS;
 	private boolean GATE3_STATUS;
 	private boolean GATE4_STATUS;
+	float scrollTimer = 0.0f;
 
 	Splash() {
 		Restart();
@@ -206,7 +207,7 @@ public class Splash implements Screen {
 		shieldMessage.setColor(Color.WHITE);
 		firstMessage = new BitmapFont();
 		firstMessage.setColor(Color.GREEN);
-
+		
 		// ------------------------------------------------------------------------------------
 	}
 
@@ -315,9 +316,9 @@ public class Splash implements Screen {
 				float angle;
 				angle = (float) Math
 						.atan2(targetY - spriteY, targetX - spriteX);
-				x2 += (float) Math.cos(angle) * 35
+				x2 += (float) Math.cos(angle) * 125
 						* Gdx.graphics.getDeltaTime();
-				y2 += (float) Math.sin(angle) * 35
+				y2 += (float) Math.sin(angle) * 125
 						* Gdx.graphics.getDeltaTime();
 				s.setPosition(x2, y2);
 			}
@@ -359,6 +360,7 @@ public class Splash implements Screen {
 			}
 		}
 	}
+
 
 	public void checkGates() {
 		if (spacemarine.getX() == 66 && spacemarine.getY() >= 200
@@ -524,7 +526,8 @@ public class Splash implements Screen {
 						* Math.cos(Math.toRadians(angle)));
 		bullet_sprite.setPosition(bulletX, bulletY);
 		bullet_sprite.setRotation(angle);
-		Bullets bullet = new Bullets(mX, mY, bulletX, bulletY, bullet_sprite);
+		//Bullets bullet = new Bullets(mX, mY, bulletX, bulletY, bullet_sprite);
+		Bullets bullet = new Bullets(mX, mY, spacemarine.getX(), spacemarine.getY(), bullet_sprite);
 		bullets.add(bullet);
 	}
 
@@ -604,6 +607,14 @@ public class Splash implements Screen {
 
 	@Override
 	public void render(float delta) {
+		 System.out.println(spacemarine.getY());
+		
+	/*	scrollTimer+= Gdx.graphics.getDeltaTime();
+		 if(scrollTimer>1.0f)
+	         scrollTimer = 0.0f;
+		this.splashImage.setU(this.scrollTimer);
+		this.splashImage.setU2(this.scrollTimer + 1);
+		*/
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P) == true
 				&& GAME_STATE == PAUSED) {
 			GAME_STATE = RUNNING;
@@ -635,6 +646,7 @@ public class Splash implements Screen {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			batch.draw(texture, 0, 0, Gdx.graphics.getWidth(),
 					Gdx.graphics.getHeight());
+			
 			spacemarine.draw(batch);
 			for (Aliens a : aliens) {
 				Sprite alien = a.getSprite();
@@ -651,10 +663,10 @@ public class Splash implements Screen {
 
 		if (GAME_STATE == RUNNING) {
 			if (TimeUtils.nanoTime() - lastSpawn > frequency) {
-				spawnAlien();
+				//spawnAlien();
 				this.secondshalf++;
 			}
-
+				
 			float angle = rotateMarine();
 			checkAliensPlayer();
 			checkBullets();
@@ -667,25 +679,46 @@ public class Splash implements Screen {
 			Gdx.gl.glClearColor(0, 0, 0, 0);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			world.step(Gdx.graphics.getDeltaTime(), 6, 2);
-			if (Gdx.input.isKeyPressed(Input.Keys.W) == true
-					&& spacemarine.getY() < 528) {
-				Marinebody.setTransform(spacemarine.getX(),
-						spacemarine.getY() + 4, angle);
+			if (Gdx.input.isKeyPressed(Input.Keys.W) == true){
+					//&& spacemarine.getY() < 528) {
+				
+				
+				if(spacemarine.getY() < 540){
+					Marinebody.setTransform(spacemarine.getX(),
+							spacemarine.getY() + 4, angle);
+				}
+				
+				if(this.splashImage.getY() > (-1512+680))
+					this.splashImage.setY(this.splashImage.getY()-4);
+				
+				//System.out.println(splashImage.getY());
+				
 			}
-			if (Gdx.input.isKeyPressed(Input.Keys.S) == true
-					&& spacemarine.getY() > 36) {
-				Marinebody.setTransform(spacemarine.getX(),
-						spacemarine.getY() - 4, angle);
+			if (Gdx.input.isKeyPressed(Input.Keys.S) == true){
+					//&& spacemarine.getY() > 36) {
+				if(spacemarine.getY() > 30){
+					Marinebody.setTransform(spacemarine.getX(),
+							spacemarine.getY() - 4, angle);
+				}
+				
+				if(this.splashImage.getY() < 0)
+					this.splashImage.setY(this.splashImage.getY()+4);
 			}
-			if (Gdx.input.isKeyPressed(Input.Keys.D) == true
-					&& spacemarine.getX() < 852) {
-				Marinebody.setTransform(spacemarine.getX() + 4,
-						spacemarine.getY(), angle);
+			if (Gdx.input.isKeyPressed(Input.Keys.D) == true) {
+				if(spacemarine.getX() < 852){
+					Marinebody.setTransform(spacemarine.getX() + 4,
+							spacemarine.getY(), angle);
+				}
+				if(this.splashImage.getX()>-985)
+					this.splashImage.setX(this.splashImage.getX()-4);
 			}
-			if (Gdx.input.isKeyPressed(Input.Keys.A) == true
-					& spacemarine.getX() > 68) {
-				Marinebody.setTransform(spacemarine.getX() - 4,
-						spacemarine.getY(), angle);
+			if (Gdx.input.isKeyPressed(Input.Keys.A) == true) {
+					if(spacemarine.getX() > 70) {
+						Marinebody.setTransform(spacemarine.getX() - 4,
+								spacemarine.getY(), angle);
+					}
+					if(this.splashImage.getX()<0)
+				this.splashImage.setX(this.splashImage.getX()+4);
 			}
 			if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) == true) {
 				if (GUN_CLIP >= 1) {
@@ -709,8 +742,9 @@ public class Splash implements Screen {
 			spacemarine.setPosition(Marinebody.getPosition().x,
 					Marinebody.getPosition().y);
 			batch.begin();
-			batch.draw(texture, 0, 0, Gdx.graphics.getWidth(),
-					Gdx.graphics.getHeight());
+		//	batch.draw(texture, 0, 0, Gdx.graphics.getWidth(),
+					//Gdx.graphics.getHeight());
+			this.splashImage.draw(batch);
 			for (Sprite g : gates) {
 				g.draw(batch);
 			}
@@ -722,7 +756,11 @@ public class Splash implements Screen {
 				Sprite s = d.getItem();
 				s.draw(batch);
 			}
-			spacemarine.draw(batch);
+			for (Bullets b : bullets) {
+				Sprite bullet = b.getSprite();
+				bullet.draw(batch);
+			}
+			spacemarine.draw(batch);			
 			gun.draw(batch);
 			life.setPosition(690, 590);
 			lifeMessage.draw(batch, "" + (int) MARINE_LIFE, 750, 620);
@@ -744,7 +782,7 @@ public class Splash implements Screen {
 			shield.draw(batch);
 			energy.setPosition(800, 600);
 			energy.draw(batch);
-			energyMessage.draw(batch, " " + (int) MARINE_ENERGY, 850, 628);
+			energyMessage.draw(batch, " " + (int) MARINE_ENERGY, 830, 620);
 			clipMessage.draw(batch, " " + GUN_CLIP, 110, 628);
 			magazine.setPosition(150, 595);
 			ammoMessage.draw(batch, " " + EXTRA_CLIPS, 200, 628);
@@ -756,10 +794,7 @@ public class Splash implements Screen {
 								50, 150);
 			}
 			// alien.draw(batch);
-			for (Bullets b : bullets) {
-				Sprite bullet = b.getSprite();
-				bullet.draw(batch);
-			}
+			
 			for (Aliens a : aliens) {
 				Sprite alien = a.getSprite();
 				alien.draw(batch);
@@ -778,9 +813,9 @@ public class Splash implements Screen {
 
 	@Override
 	public void show() {
-		stage.addActor(splashImage);
+	//	stage.addActor(splashImage);
 
-		splashImage.addAction(Actions.sequence(Actions.alpha(0),
+/*		splashImage.addAction(Actions.sequence(Actions.alpha(0),
 				Actions.fadeIn(0.5f), Actions.delay(2),
 				Actions.run(new Runnable() {
 					@Override
@@ -789,6 +824,7 @@ public class Splash implements Screen {
 								.setScreen(new Splash());
 					}
 				})));
+				*/
 	}
 
 	@Override
