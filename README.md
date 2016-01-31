@@ -8,6 +8,4 @@ Developers:
 Igor Lopes
 Leonardo Corsino
 João Carlos Melgarejo
-Read LICENSE:
-This project can be used for third parties for non-comercial use as long the credits to the authors is given.
 
